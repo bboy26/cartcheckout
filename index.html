@@ -1,0 +1,155 @@
+<html>
+<head>
+  <style>
+  .checkout-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 3px solid #483D8B;
+  border-radius: 8px;
+  position: relative;
+}
+
+.card-container {
+  width: 100%;
+  height: 200px;
+  perspective: 1000px;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+.card:hover {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+.card-front {
+   backface-visibility: hidden;
+}
+
+.card-back {
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+</style>
+</head>
+<body>
+
+<div class="checkout-container">
+  <div class="card-container">
+    <div class="card">
+     <img id="card-front" src="cardone.png" alt="Card Front" class="card-face card-front" />
+      <img id="card-back" src="cardtwo.png" alt="Card Back" class="card-face card-back" />
+    </div>
+  </div>
+  <h2 style="text-align:center; color:darkslateblue;">Card Checkout</h2>
+  <form id="checkout-form">
+    <div class="form-group">
+      <label for="card-number">Card Number:</label>
+      <input type="text" id="card-number" placeholder="1234 5678 9101 1121" required>
+    </div>
+    <div class="form-group">
+      <label for="expiry">Expiry Date:</label>
+      <input type="text" id="expiry" placeholder="MM/YY" required>
+    </div>
+    <div class="form-group">
+      <label for="cvv">CVV:</label>
+      <input type="text" id="cvv" placeholder="123" required>
+    </div>
+    <button type="submit">Submit Payment</button>
+  </form>
+</div>
+
+
+<script>
+document.getElementById("checkout-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  const cardNumber = document.getElementById("card-number").value;
+  const expiry = document.getElementById("expiry").value;
+  const cvv = document.getElementById("cvv").value;
+
+  // Simple validation for card number, expiry, and CVV
+  let errorMessage = "";
+
+  // Check if card number is 16 digits long
+  if (cardNumber.length !== 16 || isNaN(cardNumber)) {
+    errorMessage += "Please enter a valid 16-digit card number.\n";
+  }
+
+  // Check if expiry is in the format MM/YY
+  const expiryParts = expiry.split("/");
+  if (expiryParts.length !== 2 || isNaN(expiryParts[0]) || isNaN(expiryParts[1]) ||
+      expiryParts[0].length !== 2 || expiryParts[1].length !== 2) {
+    errorMessage += "Please enter a valid expiry date in the format MM/YY.\n";
+  } else {
+    const month = parseInt(expiryParts[0]);
+    const year = parseInt(expiryParts[1]);
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are zero-based
+    const currentYear = currentDate.getFullYear() % 100; // Get last two digits of the current year
+
+    if (month < 1 || month > 12 || year < currentYear || (year === currentYear && month < currentMonth)) {
+      errorMessage += "Please enter a valid expiry date.\n";
+    }
+  }
+
+  // Check if CVV is 3 digits long
+  if (cvv.length !== 3 || isNaN(cvv)) {
+    errorMessage += "Please enter a valid 3-digit CVV.\n";
+  }
+
+  // Display error message if any
+  if (errorMessage !== "") {
+    alert(errorMessage);
+  } else {
+    alert("Checkout Completed!");
+    // You can proceed with further actions like sending data to the server here
+  }
+});
+
+</script>
+
+</body>
+</html>
